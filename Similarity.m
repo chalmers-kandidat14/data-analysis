@@ -25,14 +25,12 @@ end
 
 rmsSquareForm = zeros(n,n);
 for i = 1:n
-  for j = 1:n
+  for j = i+1:n
     [~,~, d] = Kabsch(chains{i},chains{j});
     rmsSquareForm(i,j) = d;
+    rmsSquareForm(j,i) = d;
   end
   i
-end
-for i = 1:n
-    rmsSquareForm(i,i) = 0;
 end
 rmsVectorForm = squareform(rmsSquareForm);
 %%
