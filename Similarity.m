@@ -11,7 +11,6 @@ end
 %%
 %Imports graph data from csv files output, this is not needed as of now
 graphCsvFiles = dir('graphs/*.csv');
-n = length(graphCsvFiles);
 graphs = cell(n,1);
 
 for k = 1:n
@@ -33,6 +32,21 @@ for i = 1:n
   i
 end
 rmsVectorForm = squareform(rmsSquareForm);
+
+%%
+% Calculates the distance matrix by the graph method
+
+graphSquareForm = zeros(n,n);
+for i = 1:n
+  for j = i+1:n
+     dist = GraphDist(graphs{i},graphs{j});
+     graphSquareForm(i,j) = dist;
+     graphSquareForm(j,i) = dist;
+  end
+  i
+end
+graphVectorForm = squareform(graphSquareForm);
+
 %%
 %Creates the cluster tree and calculates the cophenet coefficient, which is
 %a measure of how good the clustering is. 1 is best, 0 is worst.
@@ -55,4 +69,4 @@ numberOfClusters = 10;
 clusters = cluster(clusterTree, 'maxclust', numberOfClusters);
 figure(3);
 [Y, eigs] = cmdscale(rmsSquareForm);
-scatter(Y(:,1),Y(:,2), 50, clusters)
+scatter3(Y(:,1),Y(:,2),Y(:,3), 50, clusters)
