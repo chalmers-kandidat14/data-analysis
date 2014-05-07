@@ -82,7 +82,7 @@ figure(1)
 %%
 %Calculates and displays a multi-dimentional scaling visualization of the
 %data with clusters colorized.
-numberOfClusters = 10;
+numberOfClusters = 2;
 
 clusters = cluster(clusterTree, 'maxclust', numberOfClusters);
 chainColors = [ones(n,1) ; ones(n,1) + 1];
@@ -91,5 +91,5 @@ energy = -1*[energy1 ; energy2];
 figure(3);
 [Y, eigs] = cmdscale(graphSquareForm);
 
-colormap('copper')
-scatter(Y(:,1),Y(:,2), 20, energy)
+%colormap('copper')
+scatter(Y(:,1),Y(:,2), 20, clusters)
