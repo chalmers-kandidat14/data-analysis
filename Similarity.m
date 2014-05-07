@@ -1,60 +1,74 @@
 %%
-%Imports chain data from csv files output
-chainCsvFiles = dir('chains/*.csv');
-n = length(chainCsvFiles);
-chains = cell(n,1);
+%Chains
+chainfolders = {'Chain1', 'Chain2', 'Chain3','Chain4', 'Chain5', 'Chain6','Chain7', 'Chain8', 'Chain9'}
+nochains = length(chainfolders);
+importsperchain = 1000;
 
-for k = 1:n
-  filename = chainCsvFiles(k).name;
-  chains{k} = importdata(strcat('chains/', filename),' ');
+%%
+%Imports chain data from csv files output
+
+n = nochains*importsperchain;
+chains = cell(n,1);
+for i = 1:nochains;
+    chainCsvFiles = dir([chainfolders{i}, '/chains/*.csv'])
+    for k = 1:importsperchain
+      filename = chainCsvFiles(k).name;
+      index = (i-1)*importsperchain+k;
+      filepath = [chainfolders{i}, '/chains/', filename];
+      chains{index} = importdata(filepath, ' ');
+    end
 end
 %%
 %Imports graph data from csv files output, this is not needed as of now
-graphCsvFiles = dir('graphs/*.csv');
+n = nochains*importsperchain;
 graphs = cell(n,1);
-
-for k = 1:n
-  filename = graphCsvFiles(k).name;
-  graphs{k} = importdata(strcat('graphs/', filename),' ');
+for i = 1:nochains;
+    i
+    graphCsvFiles = dir([chainfolders{i}, '/graphs/*.csv']);
+    for k = 1:importsperchain
+      filename = graphCsvFiles(k).name;
+      index = (i-1)*importsperchain+k;
+      filepath = [chainfolders{i}, '/graphs/', filename];
+      graphs{index} = importdata(filepath, ' ');
+    end
 end
 %%
 %Calculates distance matrix by the root mean square measure of chain
 %similarity, this takes some time and it is advisible to save the data to a
 %dat file after this step
 
-rmsSquareForm = zeros(n,n);
+squareForm = zeros(n,n);
 for i = 1:n
   for j = i+1:n
     [~,~, d] = Kabsch(chains{i},chains{j});
-    rmsSquareForm(i,j) = d;
-    rmsSquareForm(j,i) = d;
+    squareForm(i,j) = d;
+    squareForm(j,i) = d;
   end
   i
 end
-rmsVectorForm = squareform(rmsSquareForm);
+vectorForm = squareform(squareForm);
 
 %%
 % Calculates the distance matrix by the graph method
 
-graphSquareForm = zeros(n,n);
+squareForm = zeros(n,n);
 for i = 1:n
   for j = i+1:n
      dist = GraphDist(graphs{i},graphs{j});
-     graphSquareForm(i,j) = dist;
-     graphSquareForm(j,i) = dist;
+     squareForm(i,j) = dist;
+     squareForm(j,i) = dist;
   end
-  i
 end
-graphVectorForm = squareform(graphSquareForm);
+vectorForm = squareform(squareForm);
 
 %%
 %Creates the cluster tree and calculates the cophenet coefficient, which is
 %a measure of how good the clustering is. 1 is best, 0 is worst.
 clusterTreeMethod = 'average'; %'simple', 'average' or 'complete'
 
-clusterTree = linkage(rmsVectorForm, clusterTreeMethod);
+clusterTree = linkage(vectorForm, clusterTreeMethod);
 'The cophenet coefficien of the cluster tree is:'
-cophenet(clusterTree, rmsVectorForm)
+cophenet(clusterTree, vectorForm)
 %%
 %Creates a dendrogram of the cluster tree
 
@@ -64,9 +78,9 @@ figure(1)
 %%
 %Calculates and displays a multi-dimentional scaling visualization of the
 %data with clusters colorized.
-numberOfClusters = 10;
+numberOfClusters = 9;
 
 clusters = cluster(clusterTree, 'maxclust', numberOfClusters);
 figure(3);
-[Y, eigs] = cmdscale(rmsSquareForm);
+[Y, eigs] = cmdscale(squareForm);
 scatter3(Y(:,1),Y(:,2),Y(:,3), 50, clusters)
