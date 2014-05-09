@@ -14,6 +14,7 @@ for k = 1:n
   filename = chainCsvFiles2(k).name;
   chains{k+n} = importdata(strcat('Chain3/chains/', filename),' ');
 end
+
 %%
 %Imports graph data from csv files output, this is not needed as of now
 graphCsvFiles1 = dir('Chain2/graphs/*.csv');
@@ -86,10 +87,10 @@ numberOfClusters = 2;
 
 clusters = cluster(clusterTree, 'maxclust', numberOfClusters);
 chainColors = [ones(n,1) ; ones(n,1) + 1];
-energy = -1*[energy1 ; energy2];
+energy = [energy1 ; energy2];
 
 figure(3);
 [Y, eigs] = cmdscale(graphSquareForm);
 
 %colormap('copper')
-scatter(Y(:,1),Y(:,2), 20, clusters)
+scatter(Y(:,1),Y(:,2), 20, energy)
