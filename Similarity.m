@@ -52,9 +52,9 @@ graphVectorForm = squareform(graphSquareForm);
 %a measure of how good the clustering is. 1 is best, 0 is worst.
 clusterTreeMethod = 'average'; %'simple', 'average' or 'complete'
 
-clusterTree = linkage(rmsVectorForm, clusterTreeMethod);
+clusterTree = linkage(graphVectorForm, clusterTreeMethod);
 'The cophenet coefficien of the cluster tree is:'
-cophenet(clusterTree, rmsVectorForm)
+cophenet(clusterTree, graphVectorForm)
 %%
 %Creates a dendrogram of the cluster tree
 
@@ -68,5 +68,5 @@ numberOfClusters = 10;
 
 clusters = cluster(clusterTree, 'maxclust', numberOfClusters);
 figure(3);
-[Y, eigs] = cmdscale(rmsSquareForm);
-scatter3(Y(:,1),Y(:,2),Y(:,3), 50, clusters)
+[Y, eigs] = cmdscale(graphSquareForm);
+scatter(Y(:,1),Y(:,2), 50, clusters)
