@@ -1,6 +1,7 @@
 %%
 %Chains
-chainfolders = {'Chain1', 'Chain2', 'Chain3','Chain4', 'Chain5', 'Chain6','Chain7', 'Chain8', 'Chain9'}
+%chainfolders = {'Chain1', 'Chain2', 'Chain3','Chain4', 'Chain5', 'Chain6','Chain7', 'Chain8', 'Chain9'}
+chainfolders = {'Chain8Cubic','Chain9Cubic'}
 nochains = length(chainfolders);
 importsperchain = 1000;
 
