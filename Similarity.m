@@ -1,21 +1,21 @@
 %%
 %Chains
 %chainfolders = {'Chain1', 'Chain2', 'Chain3','Chain4', 'Chain5', 'Chain6','Chain7', 'Chain8', 'Chain9'}
-chainfolders = {'Chain8Cubic','Chain9Cubic'}
+chainfolders = {'Chain5FCC'}
 nochains = length(chainfolders);
 importsperchain = 1000;
 
 %%
 %Imports chain data from csv files output
 
-n = nochains*importsperchain;
+n = nochains*importsperchain;S
 chains = cell(n,1);
 for i = 1:nochains;
     chainCsvFiles = dir([chainfolders{i}, '/chains/*.csv'])
     for k = 1:importsperchain
       filename = chainCsvFiles(k).name;
       index = (i-1)*importsperchain+k;
-      filepath = [chainfolders{i}, '/chains/', filename];
+      filepath = [chainfolders{i}, '/chSains/', filename];
       chains{index} = importdata(filepath, ' ');
     end
 end
@@ -63,13 +63,37 @@ end
 vectorForm = squareform(squareForm);
 
 %%
+%%Calculates the medioid
+meandists = mean(squareForm, 1);
+[~, medioid] = min(meandists);
+medioid
+
+%% Imports the energies
+energies = importdata([chainfolders{1} '/energies.csv']);
+
+%% Calculate what neighbours are common
+commonneigh = graphs{1};
+for i = 2:n
+    commonneigh = commonneigh + graphs{i};
+end
+commonneigh = commonneigh / n;
+sortedcommonneigh = sort(reshape(commonneigh, [],1));
+
+%% Calculates total amount of neighbours
+noneigh = ones(1, n);
+for i = 1:n
+    noneigh(i)=sum(sum(graphs{i}));
+end
+avrgneighbs = mean(noneigh)
+
+%%
 %Creates the cluster tree and calculates the cophenet coefficient, which is
 %a measure of how good the clustering is. 1 is best, 0 is worst.
 clusterTreeMethod = 'average'; %'simple', 'average' or 'complete'
 
-clusterTree = linkage(graphVectorForm, clusterTreeMethod);
+clusterTree = linkage(vectorForm, clusterTreeMethod);
 'The cophenet coefficien of the cluster tree is:'
-cophenet(clusterTree, graphVectorForm)
+cophenet(clusterTree, vectorForm)
 
 %%
 %Creates a dendrogram of the cluster tree
@@ -80,11 +104,12 @@ figure(1)
 %%
 %Calculates and displays a multi-dimentional scaling visualization of the
 %data with clusters colorized.
-numberOfClusters = 9;
+numberOfClusters = 2;
 
 clusters = cluster(clusterTree, 'maxclust', numberOfClusters);
-figure(3);
+figure(2);
+chainColor = [ones(1000,1) ; ones(1000,1)+1];
 
-[Y, eigs] = cmdscale(graphSquareForm);
-scatter(Y(:,1),Y(:,2), 50, clusters)
+[Y, eigs] = cmdscale(squareForm(1000:2000,1000:2000));
+scatter3(Y(:,1),Y(:,2),Y(:,3), 50)
 
