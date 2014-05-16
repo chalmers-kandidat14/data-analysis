@@ -1,9 +1,9 @@
 %%
 %Chains
 %chainfolders = {'Chain1', 'Chain2', 'Chain3','Chain4', 'Chain5', 'Chain6','Chain7', 'Chain8', 'Chain9'}
-chainfolders = {'Chain2Cubic'}
+chainfolders = {'Chain2FCCNew'};%, 'Chain9FCCNew'}
 nochains = length(chainfolders);
-importsperchain = 1000;
+importsperchain = 100;
 
 %%
 %Imports chain data from csv files output
@@ -56,7 +56,7 @@ vectorForm = squareform(squareForm);
 squareForm = zeros(n,n);
 for i = 1:n
   for j = i+1:n
-     dist = GraphDist(graphs2{i},graphs2{j});
+     dist = GraphDist(graphs{i},graphs{j});
      squareForm(i,j) = dist;
      squareForm(j,i) = dist;
   end
@@ -67,8 +67,7 @@ vectorForm = squareform(squareForm);
 %%
 %Calculates the medioid
 meandists = mean(squareForm, 1);
-[~, medioid] = min(meandists);
-medioid
+[meandist, medioid] = min(meandists)
 
 %% Imports the energies
 energies = importdata([chainfolders{1} '/energies.csv']);
@@ -122,11 +121,11 @@ figure(1)
 %%
 %Calculates and displays a multi-dimentional scaling visualization of the
 %data with clusters colorized.
-numberOfClusters = 5;
+numberOfClusters = 1;
 
 clusters = cluster(clusterTree, 'maxclust', numberOfClusters);
 figure(2);
-chainColor = [ones(1000,1) ; ones(13,1)+1];
+chainColor = [ones(78,1) ; 2; ones(21,1)];
 
 [Y, eigs] = cmdscale(squareForm);
 scatter(Y(:,1),Y(:,2), 50, chainColor)
