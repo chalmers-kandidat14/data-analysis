@@ -3,7 +3,7 @@
 %chainfolders = {'Chain1', 'Chain2', 'Chain3','Chain4', 'Chain5', 'Chain6','Chain7', 'Chain8', 'Chain9'}
 chainfolders = {'Chain2off'};%, 'Chain9FCCNew'}
 nochains = length(chainfolders);
-importsperchain = 100;
+importsperchain = 200;
 
 %%
 %Imports chain data from csv files output
@@ -32,7 +32,8 @@ for i = 1:nochains;
       filepath = [chainfolders{i}, '/energyGraphs/', filename];
       a = importdata(filepath, ' ');
       %graphs{index}=triu(a',1)+triu(a,1)';
-      graphs{index}=a;
+      a(a>0)=0;
+      graphs{index}=a*(-1);
     end
 end
 %%
