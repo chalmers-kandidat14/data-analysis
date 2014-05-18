@@ -1,9 +1,9 @@
 %%
 %Chains
 %chainfolders = {'Chain1', 'Chain2', 'Chain3','Chain4', 'Chain5', 'Chain6','Chain7', 'Chain8', 'Chain9'}
-chainfolders = {'Chain2FCCNew'};%, 'Chain9FCCNew'}
+chainfolders = {'Chain2off'};%, 'Chain9FCCNew'}
 nochains = length(chainfolders);
-importsperchain = 100;
+importsperchain = 200;
 
 %%
 %Imports chain data from csv files output
@@ -25,13 +25,15 @@ n = nochains*importsperchain;
 graphs = cell(n,1);
 for i = 1:nochains;
     i
-    graphCsvFiles = dir([chainfolders{i}, '/graphs/*.csv']);
+    graphCsvFiles = dir([chainfolders{i}, '/energyGraphs/*.csv']);
     for k = 1:importsperchain
       filename = graphCsvFiles(k).name;
       index = (i-1)*importsperchain+k;
-      filepath = [chainfolders{i}, '/graphs/', filename];
+      filepath = [chainfolders{i}, '/energyGraphs/', filename];
       a = importdata(filepath, ' ');
-      graphs{index}=a+triu(a')+triu(a)';
+      %graphs{index}=triu(a',1)+triu(a,1)';
+      a(a>0)=0;
+      graphs{index}=a*(-1);
     end
 end
 %%
@@ -74,6 +76,7 @@ energies = importdata([chainfolders{1} '/energies.csv']);
 
 %% Calculate what neighbours are common
 commonneigh = graphs{1};
+
 for i = 2:n
     commonneigh = commonneigh + graphs{i};
 end
